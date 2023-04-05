@@ -8,64 +8,76 @@ Turn = tuple[Name, Message]
 Debate = List[Turn]
 
 
-def render_debate(debate: Debate, self_name: Optional[Name] = None) -> str:
-    debate_text = ""
-    for speaker, text in debate:
-        if speaker == self_name:
-            speaker = "You"
-        debate_text += F(f'{speaker}: "{text}"\n')
+def render_debate(
+    question: str, positions: Debate, debate: Debate, self_name: Optional[Name] = None
+) -> str:
+    debate_text = F(f'Question: "{question}"\n')
+    debate_text += "\n"
+    if positions:
+        debate_text += "Positions:\n"
+        for speaker, text in positions:
+            if speaker == self_name:
+                speaker = "You"
+            debate_text += F(f'{speaker}: "{text}"\n')
+        debate_text += "\n"
+    if debate:
+        debate_text += "Debate:\n"
+        for speaker, text in debate:
+            if speaker == self_name:
+                speaker = "You"
+            debate_text += F(f'{speaker}: "{text}"\n')
     return debate_text.strip()
 
 
 async def get_participants() -> List[Agent]:
     alice = Agent(
         name="Alice",
-        desc="You are trying to win the debate using reason and evidence. Take a position and defend it.",
+        desc="You are a seasoned debater, trying to win the debate using reason and evidence. State your position IN ONE SENTENCE.",
     )
     bob = Agent(
         name="Bob",
-        desc="You are trying to win the debate using reason and evidence. Take a position not taken by Alice and defend it.",
+        desc="You are a seasoned debater, trying to win the debate using reason and evidence. State your position IN ONE SENTENCE. I must be different than Alice's.",
     )
     return [alice, bob]
 
 
 async def debate(question: str) -> str:
-    debate = [("Question", question)]
+    positions: Debate = [
+        # ("Alice", "I'm in favor."),
+        # ("Bob", "I'm against."),
+    ]
+    debate: Debate = []
     participants = await get_participants()
-
     turns_left = 8
-    while turns_left > 0:
-        for participant in participants:
-            response = await respond(
-                participant,
-                "",
-                context=F(
-                    f"""There are {turns_left} turns left in the debate.
 
-{render_debate(debate, participant.name)}
+    # initialize debate
+    for participant in participants:
+        response = await chat(
+            participant,
+            context=F(
+                f"""
+    {render_debate(question, positions, debate, participant.name)}
+    """
+            ).strip(),
+        )
+        positions.append((participant.name or "", response))
+        participant.desc = f"""You are trying to win the debate using reason and evidence. There \
+    are {turns_left} turns left in the debate. Don't repeat yourself. IMPORTANT: Use only
+1-2 sentences per turn."""
+
+    while turns_left > 0:
+        for i, participant in enumerate(participants):
+            response = await chat(
+                participant,
+                context=F(
+                    f"""
+{render_debate(question, positions, debate, participant.name)}
 """
                 ).strip(),
-                style="Don't repeat yourself. No more than 1-2 sentences.",
             )
             debate.append((participant.name or "", response))
             turns_left -= 1
-    return render_debate(debate)
-
-
-# example prompt:
-"""
-You are Alice. You are trying to win the debate using reason and evidence. Take a position and
-defend it.
-
-Here's the context:
-There are 8 turns left in the debate.
-
-Question: "Should we legalize all drugs?"
-You: I'm for it.
-Bob: I'm against it.
-You: I think it would be good for the economy.
-Bob: I think it would be bad for the economy.
-
-Respond. Don't repeat yourself. No more than 1-2 sentences.
-You:
-"""
+            participant.desc = f"""You are a seasoned debater, trying to win the debate using reason and evidence. There \
+are {turns_left} turns left in the debate. Be specific. Don't repeat yourself. IMPORTANT: Use only
+1-2 sentences per turn."""
+    return render_debate(question, positions, debate)
