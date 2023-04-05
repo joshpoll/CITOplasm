@@ -50,7 +50,7 @@ Question: "{question}"
 Answer: "
 """
         )
-    return await recipe.agent().complete(prompt=prompt, stop='"')
+    return await OpenAIChatAgent().complete(prompt=prompt, stop='"')
 
 
 def agent_template(agent: Agent, style: Optional[str] = None) -> str:
@@ -94,8 +94,21 @@ async def explain(agent: Agent, topic: str) -> str:
 #     return "TODO"
 
 
-async def classify(agent: Agent, prompt: str, choices: tuple) -> int:
-    return 0
+async def classify(text: str, classes: list[str], instructions: str = "") -> str:
+    options = F("\n").join(F(f"{i + 1}. {c}") for i, c in enumerate(classes))
+    prompt = F(
+        f"""{instructions}
+
+{text}
+
+Options:
+{options}
+
+Answer with an option number and no other text. eg "2"
+"""
+    ).strip()
+    res = await OpenAIChatAgent().complete(prompt=prompt)
+    return classes[int(res) - 1]
 
 
 # suggest solutions to a problem?
@@ -110,7 +123,7 @@ async def enum(agent: Agent, collection: str, amount: str) -> str:
 -"""
     ).strip()
 
-    return recipe.agent().complete(prompt=prompt)
+    return await OpenAIChatAgent().complete(prompt=prompt)
 
 
 # break down one thing into many smaller things
@@ -125,7 +138,7 @@ Components:
 -"""
     )
 
-    subtopics_text = recipe.agent().complete(prompt=prompt)
+    subtopics_text = await OpenAIChatAgent().complete(prompt=prompt)
     subtopics = [line.strip("- ") for line in subtopics_text.split("\n")]
     return subtopics
 
@@ -141,7 +154,7 @@ Subquestion:
 -"""
     )
 
-    subtopics_text = recipe.agent().complete(prompt=prompt)
+    subtopics_text = await OpenAIChatAgent().complete(prompt=prompt)
     subtopics = [line.strip("- ") for line in subtopics_text.split("\n")]
     return subtopics
 
