@@ -94,21 +94,21 @@ async def explain(agent: Agent, topic: str) -> str:
 #     return "TODO"
 
 
-async def classify(text: str, classes: list[str], instructions: str = "") -> str:
-    options = F("\n").join(F(f"{i + 1}. {c}") for i, c in enumerate(classes))
+async def classify(text: str, instructions: str, options: list[str]) -> str:
+    options_list = F("\n").join(F(f"{i + 1}. {c}") for i, c in enumerate(options))
     prompt = F(
         f"""{instructions}
 
 {text}
 
 Options:
-{options}
+{options_list}
 
 Answer with an option number and no other text. eg "2"
 """
     ).strip()
     res = await OpenAIChatAgent().complete(prompt=prompt)
-    return classes[int(res) - 1]
+    return options[int(res) - 1]
 
 
 # suggest solutions to a problem?

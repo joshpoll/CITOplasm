@@ -29,8 +29,8 @@ async def approx_eq(str1: str, str2: str) -> bool:
 Quote 2: "{str2}"
 """
         ).strip(),
-        ["Yes", "No"],
         "Do these quotes mean approximately the same thing?",
+        ["Yes", "No"],
     )
     if res == "No":
         raise ApproximateEqualityError(str1, str2)
@@ -45,12 +45,12 @@ async def approx_gt(str1: str, str2: str) -> bool:
 Quote 2: "{str2}"
 """
         ).strip(),
+        "Which quote is more informative?",
         [
             "Quote 1",
             "Quote 2",
             "Neither",
         ],
-        "Which quote is more informative?",
     )
     if res == "Quote 2":
         raise ApproximateCmpError(str1, str2)
