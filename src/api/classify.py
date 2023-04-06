@@ -20,7 +20,7 @@ class Other(BaseOption):
 def pretty_print_option(option: Type) -> str:
     class_name = option.__name__
     field_signatures = [
-        f"{field.name}: {field.type.__name__}"
+        f"{field.name}={field.type.__name__}"
         for field in fields(option)
         if field.name != "desc"
     ]
