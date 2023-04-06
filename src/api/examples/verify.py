@@ -1,5 +1,15 @@
 from fvalues import F
-from src.api.defs import classify
+from src.api.classify import *
+
+
+@dataclass(frozen=True)
+class Yes(BaseOption):
+    desc: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class No(BaseOption):
+    desc: Optional[str] = None
 
 
 async def verify_answer(question: str, answer: str) -> bool:
@@ -11,7 +21,7 @@ Potential answer: "{answer}"
 """
         ),
         "Consider the potential answer below. Is it correct?",
-        ["Yes", "No"],
+        [Yes, No],
     )
 
-    return res == "Yes"
+    return res == Yes()

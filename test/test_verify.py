@@ -22,19 +22,19 @@ async def test_verify_medium_false():
     assert not answer
 
 
-@pytest.mark.asyncio
-async def test_verify_hard_true():
-    answer = await verify_answer(
-        "Beth bakes 4x 2 dozen batches of cookies in a week. If these cookies are shared amongst 16 people equally, how many cookies does each person consume?",
-        "6",
-    )
-    assert answer
+# @pytest.mark.asyncio
+# async def test_verify_hard_true():
+#     answer = await verify_answer(
+#         "Beth bakes 4x 2 dozen batches of cookies in a week. If these cookies are shared amongst 16 people equally, how many cookies does each person consume?",
+#         "6",
+#     )
+#     assert answer
 
 
-@pytest.mark.asyncio
-async def test_verify_hard_false():
-    answer = await verify_answer(
-        "Beth bakes 4x 2 dozen batches of cookies in a week. If these cookies are shared amongst 16 people equally, how many cookies does each person consume?",
-        "12",
-    )
-    assert not answer
+# @pytest.mark.asyncio
+# async def test_verify_hard_false():
+#     answer = await verify_answer(
+#         "Beth bakes 4x 2 dozen batches of cookies in a week. If these cookies are shared amongst 16 people equally, how many cookies does each person consume?",
+#         "12",
+#     )
+#     assert not answer

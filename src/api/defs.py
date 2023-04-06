@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from ice.recipe import recipe
 from ice.utils import map_async
 from src.api.openai_chat_agent import OpenAIChatAgent
 
@@ -94,21 +93,21 @@ async def explain(agent: Agent, topic: str) -> str:
 #     return "TODO"
 
 
-async def classify(text: str, instructions: str, options: list[str]) -> str:
-    options_list = F("\n").join(F(f"{i + 1}. {c}") for i, c in enumerate(options))
-    prompt = F(
-        f"""{instructions}
+# async def classify(text: str, instructions: str, options: list[str]) -> str:
+#     options_list = F("\n").join(F(f"{i + 1}. {c}") for i, c in enumerate(options))
+#     prompt = F(
+#         f"""{instructions}
 
-{text}
+# {text}
 
-Options:
-{options_list}
+# Options:
+# {options_list}
 
-Answer with an option number and no other text. eg "2"
-"""
-    ).strip()
-    res = await OpenAIChatAgent().complete(prompt=prompt)
-    return options[int(res) - 1]
+# Answer with an option number and no other text. eg "2"
+# """
+#     ).strip()
+#     res = await OpenAIChatAgent().complete(prompt=prompt)
+#     return options[int(res) - 1]
 
 
 # suggest solutions to a problem?
