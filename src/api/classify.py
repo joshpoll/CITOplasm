@@ -1,4 +1,5 @@
 import ast
+import re
 from typing import Any, Dict, List, Optional, Type, cast
 from attr import dataclass, fields
 
@@ -63,39 +64,90 @@ def parse_option(option_map: Dict[str, Type], option: str) -> Any:
     return data_class_constructor(**kwargs)
 
 
-async def classify(text: str, instructions: str, options: List[Type]) -> Type:
-    options = options + [Other]
+async def classify(
+    text: str,
+    instructions: str,
+    action_options: List[Type],
+    context: Optional[str] = None,
+    # output_options: List[Type],
+) -> BaseOption:
+    action_options = action_options + [Other]
+    # output_options = output_options + [Other]
 
     # get option descriptions
-    option_descs = [
+    action_options_descs = [
         field.default
-        for option in options
+        for option in action_options
         for field in fields(option)
         if field.name == "desc"
     ]
 
-    options_list = F("\n").join(
+    # output_options_descs = [
+    #     field.default
+    #     for option in output_options
+    #     for field in fields(option)
+    #     if field.name == "desc"
+    # ]
+
+    action_options_list = F("\n").join(
         F(
             f"- {pretty_print_option(opt)} # {opt_desc}"
             if opt_desc is not None
             else f"- {pretty_print_option(opt)}"
         )
-        for opt, opt_desc in zip(options, option_descs)
+        for opt, opt_desc in zip(action_options, action_options_descs)
     )
 
+    # output_options_list = F("\n").join(
+    #     F(
+    #         f"- {pretty_print_option(opt)} # {opt_desc}"
+    #         if opt_desc is not None
+    #         else f"- {pretty_print_option(opt)}"
+    #     )
+    #     for opt, opt_desc in zip(output_options, output_options_descs)
+    # )
+
+    # First, work this out in a step by step way to be sure we have the right answer.
+    # Finally, answer on a new line with one of the options applied to its arguments and no other text.
+    # For example: "ExampleOption(arg='example')"
+    # If the option has no arguments, you can just write the name of the option.
+    # For example: "ExampleOption"
+
     prompt = F(
-        f"""{instructions}
+        f"""
+Use the following format:
 
-{text}
+Input: The input you must consider.
+Context: Context for the input. This is optional.
 
-You must pick from one of the following options:
-{options_list}
+Thought: You should always think about what to do. Work this out in a step by step way to be sure we take the right action.
+Action: The next action to perform. It should be applied to its arguments and no other text.
+        For example: "ExampleAction(arg='example')"
+        If the option has no arguments, you can just write the name of the action.
+        For example: "ExampleAction"
 
-Answer with one of the options applied to its arguments and no other text.
-For example: "ExampleOption(arg='example')"
-If the option has no arguments, you can just write the name of the option.
-For example: "ExampleOption"
+You must pick from one of the following actions:
+{action_options_list}
+
+Begin! {instructions}
+
+Input: {text}
+Context: {context if context is not None else "<none>"}
 """
     ).strip()
     res = await OpenAIChatAgent().complete(prompt=prompt)
-    return parse_option({opt.__name__: opt for opt in options}, res)
+    # split thought and action using a regex
+    thought, action = re.split(r"Action:\s*", res)
+    # remove "Thought:" from thought
+    thought = thought.replace("Thought: ", "")
+    print("DEBUG: thought", thought)
+    print("DEBUG: action", action)
+    try:
+        res = parse_option({opt.__name__: opt for opt in action_options}, action)
+        return res
+    except ValueError as e:
+        print(f"Error: {e}")
+        print(f"Prompt: {prompt}")
+        print(f"Thought: {thought}")
+        print(f"Action: {action}")
+        raise e

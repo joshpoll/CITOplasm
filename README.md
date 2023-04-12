@@ -1,5 +1,23 @@
 # LLM DSL
 
+## How to run
+
+To run:
+```
+python3.10 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Run tests (call from top-level)
+```
+pytest
+```
+
+Code can be found in `api`.
+
+## Motivation
+
 This library builds on ICE: https://github.com/oughtinc/ice
 
 Have you ever wondered what it would be like to program with an LLM? Not like use an LLM to produce
@@ -28,11 +46,12 @@ have so far are:
 - **ask** Q&A format
 - **chat:** back-and-forth conversations (possibly multiple) with other agents and humans
 - **classify** to assign a category to a given input (match)
-- **approx-equal and approx-cmp**
+- **approx-equal and approx-cmp** (uses classify)
 
 Some additional primitives we're thinking about or working on are:
 
 - **decompose** to break apart an input into smaller pieces (destructure)
+  - can this be used to implement CoT?
 - **enumerate** to list elements of a collection (generator)
 - **translate/transform**
 - **summarize/reduce**
@@ -50,18 +69,12 @@ help us better organize our primitives and search for missing ones. It might als
 which LLM interactions present truly novel primitives and which ones are "merely" approximate
 versions of existing primitives.
 
-# How to run
+## Observations
 
-To run:
-```
-python3.10 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+Context-Question -> Reasoning-Answer seems to be a robust pattern across Q&A, chat, classify,
+equality/comparison. It probably has a name. It's used in the selection-inference paper. CQRA?
 
-Run tests (call from top-level)
-```
-pytest
-```
+Decompose seems to overlap with the reasoning part of Q&A (thinking step by step is a form of decomposition). There are tradeoffs in terms of number of LLM calls (and
+maybe that also means tradeoffs in accuracy).
 
-Code can be found in `api`.
+tool selection, multiple choice QA, sub-agent calls can all be built on classify

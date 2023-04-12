@@ -38,15 +38,26 @@ class Python(BaseOption):
 
 
 @pytest.mark.asyncio
-async def test_choose_action_once_python():
+async def test_choose_action_once_answer_directly_cot():
+    # used to require Python, but now it's AnswerDirectly b/c of CoT
     res = await classify(
         "sqrt(2^8)?",
         "You want to answer the question.",
         [AnswerDirectly, Search, Python],
     )
+    assert isinstance(res, AnswerDirectly)
+    assert res.answer == "16"
+
+
+@pytest.mark.asyncio
+async def test_choose_action_once_python():
+    res = await classify(
+        "log10(3673378278273)?",
+        "You want to answer the question.",
+        [AnswerDirectly, Search, Python],
+    )
     assert isinstance(res, Python)
-    # use approx_eq for the field
-    assert await approx_eq(res.expr, "sqrt(2**8)")
+    assert approx_eq(res.expr, "log10(3673378278273)")
 
 
 @pytest.mark.asyncio
