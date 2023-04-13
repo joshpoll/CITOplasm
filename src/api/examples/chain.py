@@ -46,7 +46,7 @@ async def chain(question: Question, tools: List[Type]) -> str:
 
     with LocalStateList(
         [],
-        lambda s: f"---TUPLE---\nAction: {pretty_print_option_object(s[1])}\nResult: {s[2].strip()}\nJustification: {s[0]}---END TUPLE---",
+        lambda s: f"---STEP---\nAction: {pretty_print_option_object(s[1])}\nResult: {s[2].strip()}\nJustification: {s[0]}---END STEP---",
     ) as context:
         while not isinstance(res, AnswerDirectly) and fuel > 0:
             res, thought = await classify(
@@ -59,21 +59,13 @@ When you are done, choose the FinalAnswer action.""",
                 context=context,
                 show_thought=True,
             )  # type: ignore
-            # print_with_color("---RES---", "green")
-            # print(res)
-            # print_with_color("---JUSTIFICATION---", "green")
-            # print(thought)
             if isinstance(res, ErrorAction):
-                # print_with_color("---ERROR---", "red")
-                # print(res)
+                # TODO: we shouldn't need to lose the triplet format here...
                 context.append((thought, res, ""))
                 raise res.err
             elif not isinstance(res, AnswerDirectly):
-                # print_with_color("---RUNNING ACTION---", "green")
-                # print(res)
                 observation = await res.run()
                 context.append((thought, res, observation))
             fuel -= 1
-            # print("---CONTEXT---")
-            # print(context)
+        print(context)
         return res.answer

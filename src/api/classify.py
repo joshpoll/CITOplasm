@@ -100,8 +100,9 @@ def parse_option(option_map: Dict[str, Type], option: str) -> Any:
     if data_class_constructor == Other:
         return Other()
 
+    args = [ast.literal_eval(arg) for arg in tree.body.args]
     kwargs = {kw.arg: ast.literal_eval(kw.value) for kw in tree.body.keywords}
-    return data_class_constructor(**kwargs)
+    return data_class_constructor(*args, **kwargs)
 
 
 async def classify(

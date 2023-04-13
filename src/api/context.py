@@ -52,7 +52,7 @@ class LocalStateList(LocalState):
 
     def __str__(self):
         # TODO: this is hard-coded!!!
-        res = ["Previous action/result/justification tuples."] + [
+        res = ["Previous action/result/justification steps."] + [
             self._str(v) for v in self.initial_state
         ]
         return F("\n").join(res).strip()
