@@ -26,31 +26,54 @@ from typing import List, Type
 
 from src.api.classify import *
 from src.api.context import LocalStateList
+from test.test_classify import Python
 
 
 Question = str
 
 
 @dataclass(frozen=True)
-class FinalAnswer(BaseOption):
+class AnswerDirectly(BaseOption):
     answer: str
-    desc: Optional[str] = "Choose this option if you have the final answer."
+    desc: Optional[str] = "Choose this option to provide your answer directly."
 
 
 async def chain(question: Question, tools: List[Type]) -> str:
     res: Any = None
-    tools = tools + [FinalAnswer]
+    tools = tools + [AnswerDirectly]
 
-    with LocalStateList([], lambda s: f"Action: {s[0]}\nResult: {s[1]}") as context:
-        while not isinstance(res, FinalAnswer):
-            res = await classify(
+    fuel = 10
+
+    with LocalStateList(
+        [],
+        lambda s: f"---TUPLE---\nAction: {pretty_print_option_object(s[1])}\nResult: {s[2].strip()}\nJustification: {s[0]}---END TUPLE---",
+    ) as context:
+        while not isinstance(res, AnswerDirectly) and fuel > 0:
+            res, thought = await classify(
                 question,
-                "Answer the following question as best you can. Do not provide Results. They are provided by the tools.",
+                """Answer the question as best you can. DO NOT provide Results, since they are provided by the tools.
+Provide just one action at a time. You will have an opportunity to provide future actions later.
+Using the provided context, please provide the next action to help answer the question without repeating any actions already done. If possible, provide any additional insights or information that has not been mentioned before. If a previous action resulted in an error, please provide an action that will help you avoid that error.
+When you are done, choose the FinalAnswer action.""",
                 tools,
                 context=context,
-                omit=["run"],
-            )
-            if not isinstance(res, FinalAnswer):
+                show_thought=True,
+            )  # type: ignore
+            # print_with_color("---RES---", "green")
+            # print(res)
+            # print_with_color("---JUSTIFICATION---", "green")
+            # print(thought)
+            if isinstance(res, ErrorAction):
+                # print_with_color("---ERROR---", "red")
+                # print(res)
+                context.append((thought, res, ""))
+                raise res.err
+            elif not isinstance(res, AnswerDirectly):
+                # print_with_color("---RUNNING ACTION---", "green")
+                # print(res)
                 observation = await res.run()
-                context.append((res, observation))
+                context.append((thought, res, observation))
+            fuel -= 1
+            # print("---CONTEXT---")
+            # print(context)
         return res.answer

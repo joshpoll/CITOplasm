@@ -20,7 +20,7 @@ async def verify_answer(question: str, answer: str) -> bool:
 Potential answer: "{answer}"
 """
         ),
-        "Consider the potential answer below. Is it correct?",
+        "Consider the potential answer to the question. Is it correct?",
         [Yes, No],
     )
 

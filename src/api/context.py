@@ -51,7 +51,11 @@ class LocalStateList(LocalState):
         super().__init__(initial_state, _str)
 
     def __str__(self):
-        return F("\n").join(self._str(v) for v in self.initial_state).strip()
+        # TODO: this is hard-coded!!!
+        res = ["Previous action/result/justification tuples."] + [
+            self._str(v) for v in self.initial_state
+        ]
+        return F("\n").join(res).strip()
 
     @classmethod
     def get(cls, index, default=None):

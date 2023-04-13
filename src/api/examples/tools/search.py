@@ -1,5 +1,6 @@
+from dataclasses import dataclass
 import os
-from typing import List, Union
+from typing import Any, List, Union
 import httpx
 
 from fvalues import F
@@ -16,7 +17,7 @@ async def search_json(
         return response.json()
 
 
-def render_results(data: dict) -> Union[str, List[F]]:
+def render_results(data: dict) -> Union[str, List[str]]:
     if not data or not data.get("organic_results"):
         return "No results found"
 
@@ -27,14 +28,23 @@ def render_results(data: dict) -> Union[str, List[F]]:
         snippet = result.get("snippet")
         if not title or not link or not snippet:
             continue
-        results.append(F(f"{title}\n{link}\n{snippet}\n"))
+        results.append(str(F(f"{title}\n{link}\n{snippet}\n")))
 
-    # return F("\n").join(results)
-    return results
+    # return results[:3]
+    return results[0]
 
 
 async def search(
     question: str = "Who is the president of the United States?",
-) -> Union[str, List[F]]:
+) -> Union[str, List[str]]:
     results = await search_json(question)
     return render_results(results)
+
+
+@dataclass(frozen=True)
+class Search:
+    query: str
+    desc: str = "Search Google for the given query"
+
+    async def run(self) -> Any:
+        return await search(self.query)
