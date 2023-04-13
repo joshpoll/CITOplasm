@@ -36,17 +36,24 @@ class FinalAnswer(BaseOption):
     desc: Optional[str] = "Choose this option if you have the final answer."
 
 
-def run(option: BaseOption):
-    pass
+async def chain(question: Question, tools: List[Type]) -> str:
+    res: Any = None
+    scratchpad: List[Any] = []
 
+    tools = tools + [FinalAnswer]
 
-# async def chain(question: Question, options: List[Type]) -> Type:
-#     res = None
-#     scratchpad = []
-#     while not isinstance(res, FinalAnswer):
-#         res = await classify(
-#             question, "Answer the following question as best you can.", options
-#         )
-#         scratchpad.append(res)
-#         run(res)
-#     return res
+    while not isinstance(res, FinalAnswer):
+        context = "\n".join(
+            f"""Action: {s[0]}\nResult: {s[1]}""" for s in scratchpad
+        ).strip()
+        res = await classify(
+            question,
+            "Answer the following question as best you can. Do not provide Results. They are provided by the tools.",
+            tools,
+            context=context,
+            omit=["run"],
+        )
+        if not isinstance(res, FinalAnswer):
+            observation = await res.run()
+            scratchpad.append((res, observation))
+    return res.answer

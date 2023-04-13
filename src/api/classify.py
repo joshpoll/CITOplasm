@@ -1,7 +1,7 @@
 import ast
 import re
 from typing import Any, Dict, List, Optional, Type, cast
-from attr import dataclass, fields
+from dataclasses import dataclass, fields
 
 from fvalues import F
 
@@ -18,12 +18,15 @@ class Other(BaseOption):
     desc = "Choose this option if none of the other options apply."
 
 
-def pretty_print_option(option: Type) -> str:
+def pretty_print_option(option: Type, omit: Optional[List[str]] = None) -> str:
+    omit = omit or []
+    omit = omit + ["desc"]
+
     class_name = option.__name__
     field_signatures = [
         f"{field.name}={field.type.__name__}"
         for field in fields(option)
-        if field.name != "desc"
+        if field.name not in omit
     ]
     signature = (
         f"""({", ".join(field_signatures)})""" if len(field_signatures) > 0 else ""
@@ -69,6 +72,7 @@ async def classify(
     instructions: str,
     action_options: List[Type],
     context: Optional[str] = None,
+    omit: Optional[List[str]] = None,
     # output_options: List[Type],
 ) -> BaseOption:
     action_options = action_options + [Other]
@@ -91,9 +95,9 @@ async def classify(
 
     action_options_list = F("\n").join(
         F(
-            f"- {pretty_print_option(opt)} # {opt_desc}"
+            f"- {pretty_print_option(opt, omit)} # {opt_desc}"
             if opt_desc is not None
-            else f"- {pretty_print_option(opt)}"
+            else f"- {pretty_print_option(opt, omit)}"
         )
         for opt, opt_desc in zip(action_options, action_options_descs)
     )
@@ -132,7 +136,7 @@ You must pick from one of the following actions:
 Begin! {instructions}
 
 Input: {text}
-Context: {context if context is not None else "<none>"}
+Context: {context if context and context is not None else "<none>"}
 """
     ).strip()
     res = await OpenAIChatAgent().complete(prompt=prompt)
@@ -140,8 +144,6 @@ Context: {context if context is not None else "<none>"}
     thought, action = re.split(r"Action:\s*", res)
     # remove "Thought:" from thought
     thought = thought.replace("Thought: ", "")
-    print("DEBUG: thought", thought)
-    print("DEBUG: action", action)
     try:
         res = parse_option({opt.__name__: opt for opt in action_options}, action)
         return res

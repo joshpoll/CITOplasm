@@ -57,7 +57,7 @@ async def test_choose_action_once_python():
         [AnswerDirectly, Search, Python],
     )
     assert isinstance(res, Python)
-    assert approx_eq(res.expr, "log10(3673378278273)")
+    assert await approx_eq(res.expr, "log10(3673378278273)")
 
 
 @pytest.mark.asyncio
