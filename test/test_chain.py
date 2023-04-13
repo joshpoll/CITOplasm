@@ -4,7 +4,7 @@ import pytest
 from src.api.classify import classify, pretty_print_option
 
 from src.api.examples.chain import chain, FinalAnswer
-from src.tools.search_string import search_string
+from src.api.examples.tools.search import search
 from test.approx_cmp import approx_eq
 
 
@@ -14,7 +14,7 @@ class Search:
     desc: str = "Search Google for the given query"
 
     def run(self) -> Any:
-        return search_string(self.query)
+        return search(self.query)
 
 
 @pytest.mark.asyncio

@@ -1,9 +1,10 @@
 import ast
 import re
-from typing import Any, Dict, List, Optional, Type, cast
+from typing import Any, Dict, List, Optional, Type, Union, cast
 from dataclasses import dataclass, fields
 
 from fvalues import F
+from src.api.context import LocalStateList
 
 from src.api.openai_chat_agent import OpenAIChatAgent
 
@@ -71,7 +72,7 @@ async def classify(
     text: str,
     instructions: str,
     action_options: List[Type],
-    context: Optional[str] = None,
+    context: Union[Optional[str], LocalStateList] = None,
     omit: Optional[List[str]] = None,
     # output_options: List[Type],
 ) -> BaseOption:
