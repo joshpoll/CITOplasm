@@ -60,7 +60,7 @@ async def async_exec_python(code: str) -> str:
 @dataclass(frozen=True)
 class Python:
     code: str
-    desc: str = "A Python `exec`. print() statements will be captured and returned."
+    desc: str = "A Python `exec`. print() statements will be captured and returned. Output one line of code with semicolons separating statements, no newlines. Always use this tool for any math calculation rather than computing math answers yourself."
 
     async def run(self) -> Any:
         return await async_exec_python(self.code)

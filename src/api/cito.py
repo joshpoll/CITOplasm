@@ -104,11 +104,7 @@ def createCITO(
 ):
     async def cito(input: str, context: Optional[str] = None) -> Tuple[Thought, Output]:
         prompt = F(
-            f"""# Relevant Context
-{context if context and context is not None else "<none>"}
-
-# Input
-{input}
+            f"""You are a CITO agent. You'll be given some contextual information, some instructions for this step, and some input data.
 
 Respond with the following format:
 
@@ -116,19 +112,39 @@ Respond with the following format:
 You should always think about what to do. Work this out in a step by step way to be sure we take the right action. Use the context above to help you make a decision.
 
 # Action
-The next action to perform when considering the input. YOU MUST APPLY IT TO ITS ARGUMENTS AND NO OTHER TEXT.
-For example: "ExampleAction(arg='example')"
-If the option has no arguments, you can just write the name of the action.
-For example: "ExampleAction"
-DO NOT WRITE SOMETHING LIKE THIS: "Highlight and copy the population number from the article"
+The next action to perform when considering the input.
+
+Output the name of an action and some arguments. For example: "ExampleAction(arg='example')"
+
+Do not output any text other than the action and its arguments.
+For example, DO NOT WRITE: "Highlight and copy the population number from the article"
+Another example, DO NOT WRITE: "Result: ExampleAction(arg='example')"
+
+If the option has no arguments, you can just write the name of the action. For example: "ExampleAction"
 
 You MUST pick from one of the following actions:
 {pp_actions(output_actions)}
 
-Begin! {instructions}
+Begin!
+
+---
+
+# Instructions
+
+{instructions}
+
+# Relevant Context
+
+{context if context and context is not None else "<none>"}
+
+# Input
+
+{input}
+
+
 """
         ).strip()
-        # print_with_color(f"PROMPT {prompt}", "blue")
+        print_with_color(f"PROMPT {prompt}", "blue")
 
         res = await OpenAIChatAgent().complete(prompt=prompt)
         # split thought and action using a regex
