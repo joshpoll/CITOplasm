@@ -23,7 +23,21 @@ async def test_chain_multistep():
         "What is the log10 of the number of people living in the US vs China?",
         [Search, Python],
     )
-    print(res)
+    # print(res)
+    assert await approx_eq(
+        res,
+        "The log10 of the population of the US is 8.52 and the log10 of the population of China is 9.16.",
+    )
+
+
+# TODO: I should verify this with multi-step LLM verification
+@pytest.mark.asyncio
+async def test_chain_departed():
+    res = await chain(
+        "In what year was the film Departed with Leonardo DiCaprio released? What is this year raised to the 0.43 power?",
+        [Search, Python],
+    )
+    # print(res)
     assert await approx_eq(
         res,
         "The log10 of the population of the US is 8.52 and the log10 of the population of China is 9.16.",

@@ -26,7 +26,7 @@ def exec_python(code: str) -> str:
 
     try:
         # Execute the code
-        exec(code)
+        exec(f"global _i; _i = {code}")
     except Exception as e:
         print(f"An error occurred during execution: {e}")
     finally:
@@ -36,7 +36,11 @@ def exec_python(code: str) -> str:
     # Get the captured output
     captured_output = output_capture.getvalue()
 
-    return captured_output
+    global _i
+    return F(
+        f"""{captured_output}
+{_i if "_i" in globals() and _i is not None else ""}"""
+    ).strip()
 
 
 async def async_eval_python(expression: str) -> str:

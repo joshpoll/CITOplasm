@@ -53,8 +53,10 @@ async def chain(question: Question, tools: List[Type]) -> str:
                 question,
                 """Answer the question as best you can. DO NOT provide Results, since they are provided by the tools.
 Provide just one action at a time. You will have an opportunity to provide future actions later.
-Using the provided context, please provide the next action to help answer the question without repeating any actions already done. If possible, provide any additional insights or information that has not been mentioned before. If a previous action resulted in an error, please provide an action that will help you avoid that error.
-When you are done, choose the FinalAnswer action.""",
+Using the provided actions and results, please provide the next action to help answer the question.
+DO NOT REPEAT PREVIOUS ACTIONS WITH THE SAME ARGUMENTS. If possible, provide any additional insights or information that has not been mentioned before.
+If the previous action resulted in an error, please provide an action that will help you avoid that error.
+When you are done, choose the AnswerDirectly action.""",
                 tools,
                 context=context,
                 show_thought=True,
