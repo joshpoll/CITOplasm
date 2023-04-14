@@ -1,6 +1,5 @@
 import pytest
-from src.api.examples.verify import *
-from src.api.verify import verify
+from src.functions.verify import verify
 
 
 @pytest.mark.asyncio

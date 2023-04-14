@@ -1,6 +1,6 @@
 import pytest
-from src.api.ask import ask
-from src.api.compare import MoreInformative, SameAs, info_cmp, info_eq
+from src.functions.ask import ask
+from src.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
 
 
 @pytest.mark.asyncio

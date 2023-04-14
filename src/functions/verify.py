@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional, Union
 from fvalues import F
-from src.api.agent import Agent
+from src.agent.agent import Agent
 
-from src.api.cito import createCITO
+from src.cito import createCITO
 
 
 @dataclass(frozen=True)

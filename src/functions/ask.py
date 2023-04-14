@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from src.api.agent import Agent
-from src.api.cito import createCITO
+from src.agent.agent import Agent
+from src.cito import createCITO
 
 
 @dataclass(frozen=True)

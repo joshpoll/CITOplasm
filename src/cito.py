@@ -5,9 +5,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type, cast
 
 from fvalues import F
 
-from src.api.agent import Agent
-from src.api.openai_chat_agent import OpenAIChatAgent
-from src.api.util import print_with_color
+from src.agent.agent import Agent
+from src.agent.openai_chat_agent import OpenAIChatAgent
+from src.util import print_with_color
 
 
 @dataclass(frozen=True)
@@ -68,6 +68,20 @@ def pp_action(action: Type) -> str:
         f"""({", ".join(field_signatures)})""" if len(field_signatures) > 0 else ""
     )
     return f"{class_name}{signature}"
+
+
+def pp_action_object(obj: Any, omit: Optional[List[str]] = None) -> str:
+    omit = omit or []
+    omit = omit + ["desc"]
+
+    class_name = obj.__class__.__name__
+    field_values = [
+        f"{field.name}={repr(getattr(obj, field.name))}"
+        for field in fields(obj)
+        if field.name not in omit
+    ]
+    values = f"""({", ".join(field_values)})""" if len(field_values) > 0 else ""
+    return f"{class_name}{values}"
 
 
 def pp_actions(actions: List[Type]) -> str:
