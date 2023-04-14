@@ -144,7 +144,7 @@ Begin!
 
 """
         ).strip()
-        print_with_color(f"PROMPT {prompt}", "blue")
+        # print_with_color(f"PROMPT {prompt}", "blue")
 
         res = await OpenAIChatAgent().complete(prompt=prompt)
         # split thought and action using a regex

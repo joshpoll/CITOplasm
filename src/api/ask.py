@@ -17,7 +17,10 @@ class CannotAnswer:
 
 
 async def ask(
-    question: str, context: Optional[str] = None, agent: Optional[Agent] = None
+    question: str,
+    context: Optional[str] = None,
+    agent: Optional[Agent] = None,
+    debug: bool = False,
 ) -> str:
     ask = createCITO(
         "Answer the question as best you can.",
@@ -25,8 +28,9 @@ async def ask(
         agent=agent,
     )
     thought, answer = await ask(question, context=context)
-    print(thought)
-    print(answer)
+    if debug:
+        print(thought)
+        print(answer)
     if isinstance(answer, AnswerDirectly):
         return answer.answer
     else:

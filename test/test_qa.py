@@ -1,6 +1,6 @@
 import pytest
 from src.api.ask import ask
-from src.api.compare import GreaterThan, SameAs, info_cmp, info_eq
+from src.api.compare import MoreInformative, SameAs, info_cmp, info_eq
 
 
 @pytest.mark.asyncio
@@ -16,4 +16,4 @@ async def test_ask_with_context():
         context="We're running a hackathon on 9/9/2022 to decompose complex reasoning tasks into subtasks that are easier to automate & evaluate with language models. Our team is currently breaking down reasoning about the quality of evidence in randomized controlled trials into smaller tasks e.g. placebo, intervention adherence rate, blinding procedure, etc.",
     )
     res = await info_cmp(answer, "A hackathon is happening on 9/9/2022.")
-    assert isinstance(res, GreaterThan) or isinstance(res, SameAs)
+    assert isinstance(res, MoreInformative) or isinstance(res, SameAs)

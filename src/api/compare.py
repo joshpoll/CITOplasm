@@ -20,14 +20,16 @@ class DifferentThan:
     ] = "Choose this option if the two pieces of information are different."
 
 
-async def info_eq(text1: str, text2: str, agent: Optional[Agent] = None) -> bool:
+async def info_eq(
+    text1: str, text2: str, agent: Optional[Agent] = None, debug: bool = False
+) -> bool:
     info_eq = createCITO(
         "Are these two pieces of information the same?",
         [SameAs, DifferentThan],
         agent=agent,
     )
 
-    _, answer = await info_eq(
+    thought, answer = await info_eq(
         F(
             f"""First piece of information: "{text1}"
 
@@ -35,21 +37,24 @@ Second piece of information: "{text2}"
     """
         ).strip()
     )
+    if debug:
+        print(thought)
+        print(answer)
     return answer == SameAs()
 
 
 @dataclass(frozen=True)
-class LessThan:
+class LessInformative:
     desc: Optional[
         str
-    ] = "Choose this option if the first piece of information is less than the second piece of information."
+    ] = "Choose this option if the first piece is less informative than the second piece."
 
 
 @dataclass(frozen=True)
-class GreaterThan:
+class MoreInformative:
     desc: Optional[
         str
-    ] = "Choose this option if the first piece of information is greater than the second piece of information."
+    ] = "Choose this option if the first piece is more informative the second piece."
 
 
 @dataclass(frozen=True)
@@ -60,20 +65,45 @@ class Incomparable:
 
 
 async def info_cmp(
-    text1: str, text2: str, agent: Optional[Agent] = None
-) -> Union[LessThan, SameAs, GreaterThan, Incomparable]:
+    text1: str, text2: str, agent: Optional[Agent] = None, debug: bool = False
+) -> Union[LessInformative, SameAs, MoreInformative, Incomparable]:
     info_cmp = createCITO(
-        "Which of these pieces of information is greater?",
-        [LessThan, SameAs, GreaterThan, Incomparable],
+        """Which of the input pieces of information is more informative?
+
+# Examples
+
+Example:
+First piece of information: "8 * 8 = 64 and 64 is the number of squares on a chessboard"
+Second piece of information: "8 * 8 = 64"
+GreaterThan
+
+Example:
+First piece of information: "8 * 8 = 64"
+Second piece of information: "8 * 8 = 64 and 64 is the number of squares on a chessboard"
+LessThan
+
+Example:
+First piece of information: "8 * 8 = 64"
+Second piece of information: "The answer is 8 * 8 = 64"
+SameAs
+
+Example:
+First piece of information: "The sky is blue."
+Second piece of information: "The sky is red."
+Incomparable
+""",
+        [LessInformative, SameAs, MoreInformative, Incomparable],
         agent=agent,
     )
 
-    _, answer = await info_cmp(
+    thought, answer = await info_cmp(
         F(
             f"""First piece of information: "{text1}"
-
 Second piece of information: "{text2}"
     """.strip()
         )
     )
+    if debug:
+        print(thought)
+        print(answer)
     return answer
