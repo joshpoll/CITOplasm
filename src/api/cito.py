@@ -71,7 +71,7 @@ def pp_action(action: Type) -> str:
 
 
 def pp_actions(actions: List[Type]) -> str:
-    actions = actions + [Other]
+    # actions = actions + [Other]
 
     # get option descriptions
     action_descs = [
@@ -112,42 +112,47 @@ def createCITO(
 
 Respond with the following format:
 
-Thought: You should always think about what to do. Work this out in a step by step way to be sure we take the right action. Use the context above to help you make a decision.
-Action: The next action to perform when considering the input. YOU MUST APPLY IT TO ITS ARGUMENTS
-AND NO OTHER TEXT.
-        For example: "ExampleAction(arg='example')"
-        If the option has no arguments, you can just write the name of the action.
-        For example: "ExampleAction"
-        DO NOT WRITE SOMETHING LIKE THIS: "Highlight and copy the population number from the article"
+# Thought
+You should always think about what to do. Work this out in a step by step way to be sure we take the right action. Use the context above to help you make a decision.
+
+# Action
+The next action to perform when considering the input. YOU MUST APPLY IT TO ITS ARGUMENTS AND NO OTHER TEXT.
+For example: "ExampleAction(arg='example')"
+If the option has no arguments, you can just write the name of the action.
+For example: "ExampleAction"
+DO NOT WRITE SOMETHING LIKE THIS: "Highlight and copy the population number from the article"
 
 You MUST pick from one of the following actions:
 {pp_actions(output_actions)}
 
 Begin! {instructions}
-Thought:
 """
         ).strip()
         # print_with_color(f"PROMPT {prompt}", "blue")
 
         res = await OpenAIChatAgent().complete(prompt=prompt)
         # split thought and action using a regex
-        split_res = re.split(r"Action:\s*", res)
+        # split_res = re.split(r"Action:\s*", res)
+        split_res = re.split(r"# Action\s*", res)
         # thought may not exist
-        thought = split_res[0] if len(split_res) > 1 else ""
-        action = split_res[-1]
+        thought = split_res[0].strip() if len(split_res) > 1 else ""
+        action = split_res[-1].strip()
 
-        # remove "Thought:" from thought
-        thought = thought.replace("Thought: ", "").strip()
+        # remove "# Thought" from thought
+        thought = thought.replace("# Thought", "").strip()
         try:
             # print(f"Prompt: {prompt}")
             # print(f"Thought: {thought}")
             # print(f"Action: {action}")
-            res = parse_action({opt.__name__: opt for opt in output_actions}, action)
+            parsed_action = parse_action(
+                {opt.__name__: opt for opt in output_actions}, action
+            )
             # if show_thought:
             #     return res, thought
-            return thought, res
+            return thought, parsed_action
         except Exception as e:
             print_with_color(f"Error: {e}", "red")
+            print_with_color(f"Result: {res}", "blue")
             print_with_color(f"Prompt: {prompt}", "red")
             print_with_color(f"Thought: {thought}", "red")
             print_with_color(f"Action: {action}", "red")

@@ -12,8 +12,8 @@ class AnswerDirectly:
 
 
 @dataclass(frozen=True)
-class Unknown:
-    desc: Optional[str] = "Choose this option if you don't know the answer."
+class CannotAnswer:
+    desc: Optional[str] = "Choose this option if you cannot answer the question."
 
 
 async def ask(
@@ -21,10 +21,12 @@ async def ask(
 ) -> str:
     ask = createCITO(
         "Answer the question as best you can.",
-        [AnswerDirectly, Unknown],
+        [AnswerDirectly, CannotAnswer],
         agent=agent,
     )
-    _, answer = await ask(question, context=context)
+    thought, answer = await ask(question, context=context)
+    print(thought)
+    print(answer)
     if isinstance(answer, AnswerDirectly):
         return answer.answer
     else:
