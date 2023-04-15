@@ -18,11 +18,13 @@
 ## Write Chains
 ```python
 await chain(
-  "In what year was the film Departed with Leonardo DiCaprio released? What is this year raised to the 0.43 power?",
+  ("In what year was the film Departed with Leonardo DiCaprio released?"
+   "What is this year raised to the 0.43 power?"),
   [Search, Python],
 )
 
-# The film Departed with Leonardo DiCaprio was released in 2006 and 2006 raised to the 0.43 power is 26.30281917656938.
+# The film Departed with Leonardo DiCaprio was released in 2006
+# and 2006 raised to the 0.43 power is 26.30281917656938.
 ```
 
 ## Add Context
@@ -34,14 +36,22 @@ await ask("What is happening on 9/9/2022?")
 
 await ask(
   "What is happening on 9/9/2022?",
-  context="We're running a hackathon on 9/9/2022 to decompose complex reasoning tasks into subtasks that are easier to automate & evaluate with language models....")
+  context=("We're running a hackathon on 9/9/2022"
+           "to decompose complex reasoning tasks into subtasks"
+           "that are easier to automate & evaluate with language models....")
+)
 
 # A hackathon is happening on 9/9/2022.
 ```
 
 ## Compare Texts
 ```python
-await info_cmp("A hackathon on 9/9/2022 to decompose complex reasoning tasks into subtasks that are easier to automate & evaluate with language models", "A hackathon is happening on 9/9/2022.")
+await info_cmp(
+  ("A hackathon on 9/9/2022"
+   "to decompose complex reasoning tasks into subtasks"
+   "that are easier to automate & evaluate with language models"),
+  "A hackathon is happening on 9/9/2022."
+)
 
 # MoreInformative()
 ```
