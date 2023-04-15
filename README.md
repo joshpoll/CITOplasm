@@ -1,4 +1,60 @@
-# CITOplasm
+<div align="center" style="display:flex;flex-direction:column;">
+  <p>
+  <a href="https://discord.gg/ArYxurZU">
+    <img alt="CITOplasm logo" src="https://user-images.githubusercontent.com/21694516/232182002-bc1c43ed-6a2e-4278-aade-0c1e215467a1.jpeg" width="10%">
+  </a>
+  </p>
+  <h1>CITOplasm
+  <h3>Augment your Python code with flexible LLM functions
+  <br />
+  like ask, chain, and compare.</h3>
+  <p>
+    <a href="https://discord.gg/ArYxurZU">
+      <img alt="Join our Discord!" src="https://dcbadge.vercel.app/api/server/ArYxurZU?style=flat">
+    </a>
+  </p>
+</div>
+
+## Write Chains
+```python
+await chain(
+  "In what year was the film Departed with Leonardo DiCaprio released? What is this year raised to the 0.43 power?",
+  [Search, Python],
+)
+
+# The film Departed with Leonardo DiCaprio was released in 2006 and 2006 raised to the 0.43 power is 26.30281917656938.
+```
+
+## Add Context
+```python
+await ask("What is happening on 9/9/2022?")
+
+# I don't know.
+
+
+await ask(
+  "What is happening on 9/9/2022?",
+  context="We're running a hackathon on 9/9/2022 to decompose complex reasoning tasks into subtasks that are easier to automate & evaluate with language models....")
+
+# A hackathon is happening on 9/9/2022.
+```
+
+## Compare Texts
+```python
+await info_cmp("A hackathon on 9/9/2022 to decompose complex reasoning tasks into subtasks that are easier to automate & evaluate with language models", "A hackathon is happening on 9/9/2022.")
+
+# MoreInformative()
+```
+
+## Built on CITO
+`CITO := (context, input) -> (thought, option)`
+It's a variation on CQRA (context, question, reasoning, answer) that is more agnostic to inputs and ensures more structured outputs.
+
+```
+ask = createCITO("Answer the question as best you can.", [AnswerDirectly, CannotAnswer])
+```
+
+# More Info
 
 CITOplasm is a Python library for writing LLM code in a declarative way. Our aim is to eliminate the need to write complicated prompts, templates, and recipes. Instead, we enable people to write compositional programs using base calls to LLMs (CITOs) and normal Python loops, functions, and conditionals.
 
