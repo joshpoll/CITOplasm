@@ -54,6 +54,17 @@ It's a variation on CQRA (context, question, reasoning, answer) that is more agn
 ask = createCITO("Answer the question as best you can.", [AnswerDirectly, CannotAnswer])
 ```
 
+```python
+@dataclass(frozen=True)
+class AnswerDirectly:
+    answer: str
+    desc: Optional[str] = "Choose this option to provide your answer directly."
+
+@dataclass(frozen=True)
+class CannotAnswer:
+    desc: Optional[str] = "Choose this option if you cannot answer the question."
+```
+
 # More Info
 
 CITOplasm is a Python library for writing LLM code in a declarative way. Our aim is to eliminate the need to write complicated prompts, templates, and recipes. Instead, we enable people to write compositional programs using base calls to LLMs (CITOs) and normal Python loops, functions, and conditionals.
