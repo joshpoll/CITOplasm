@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import date
 import os
 from typing import Any, List, Union
 import httpx
@@ -44,7 +45,7 @@ async def search(
 @dataclass(frozen=True)
 class Search:
     query: str
-    desc: str = "Search Google for the given query"
+    desc: str = f"""Search Google for the given query. Current date: {date.today().strftime("%B %d, %Y")}"""
 
     async def run(self) -> Any:
         return await search(self.query)

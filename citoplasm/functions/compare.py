@@ -24,7 +24,30 @@ async def info_eq(
     text1: str, text2: str, agent: Optional[Agent] = None, debug: bool = False
 ) -> bool:
     info_eq = createCITO(
-        "Are these two pieces of information the same?",
+        """Are these two pieces of information about the same?
+
+# Examples
+
+Example:
+First piece of information: "3-7"
+Second piece of information: "4"
+SameAs
+
+Example:
+First piece of information: "5"
+Second piece of information: "4"
+SameAs
+
+Example:
+First piece of information: "5.1"
+Second piece of information: "4.9"
+SameAs
+
+Example:
+First piece of information: "10"
+Second piece of information: "100"
+DifferentThan
+""",
         [SameAs, DifferentThan],
         agent=agent,
     )

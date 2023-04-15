@@ -28,7 +28,10 @@ def exec_python(code: str) -> str:
         # Execute the code
         exec(f"global _i; _i = {code}")
     except Exception as e:
-        print(f"An error occurred during execution: {e}")
+        try:
+            exec(code)
+        except Exception as e:
+            print(f"An error occurred during execution: {e}")
     finally:
         # Restore sys.stdout to its original value
         sys.stdout = original_stdout

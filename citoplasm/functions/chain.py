@@ -56,7 +56,7 @@ async def chain(question: Question, tools: List[Type]) -> str:
             context += "\n" + thought + "\n" + f"{action.err}"
         elif not terminate(action):
             observation = await action.run()
-            context += f"## STEP \nAction: {pp_action_object(action)}\nResult: {observation.strip()}\nJustification: {thought if thought else 'None'}\n"
+            context += f"## STEP\n### Action\n{pp_action_object(action)}\n\n### Result\n{observation.strip()}\n\n### Justification\n{thought if thought else 'None'}\n\n"
         fuel -= 1
 
     return action.answer
