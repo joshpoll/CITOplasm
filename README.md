@@ -1,4 +1,15 @@
-# LLM DSL
+# CITOplasm
+
+CITOplasm is a Python library for writing LLM code in a declarative way. Our aim is to eliminate the need to write complicated prompts, templates, and recipes. Instead, we enable people to write compositional programs using base calls to LLMs (CITOs) and normal Python loops, functions, and conditionals.
+
+At the heart of CITOplasm is `createCITO`, a function that creates a CITO prompt. CITO stands for `(context, input) -> (thought, output)`. (It's a variation of CQRA.) On top of base CITO, we have ready-to-use functions that are broadly useful. These currently include `ask`, `chain`, `compare`, and `verify`.
+
+Our future goals include:
+- JavaScript/TypeScript support
+- more functions
+- more robust CITO
+- transparent prompt engineering optimizations, perhaps using LMQL
+- fleshing out `agent` and `context` concepts
 
 ## How to run
 
@@ -14,9 +25,7 @@ Run tests (call from top-level)
 pytest
 ```
 
-Code can be found in `api`.
-
-## Motivation
+## Motivation and Inspiration
 
 This library builds on ICE: https://github.com/oughtinc/ice
 
