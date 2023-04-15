@@ -50,7 +50,7 @@ await info_cmp("A hackathon on 9/9/2022 to decompose complex reasoning tasks int
 `CITO := (context, input) -> (thought, option)`
 It's a variation on CQRA (context, question, reasoning, answer) that is more agnostic to inputs and ensures more structured outputs.
 
-```
+```python
 ask = createCITO("Answer the question as best you can.", [AnswerDirectly, CannotAnswer])
 ```
 
