@@ -44,7 +44,7 @@ await ask(
 # A hackathon is happening on 9/9/2022.
 ```
 
-## Compare Texts
+## Compare Text
 ```python
 await info_cmp(
   ("A hackathon on 9/9/2022"
