@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import Optional, Union
 
 from fvalues import F
-from src.agent.agent import Agent
-from src.cito import createCITO
+from citoplasm.agent.agent import Agent
+from citoplasm.cito import createCITO
 
 
 @dataclass(frozen=True)

@@ -2,10 +2,10 @@ from dataclasses import dataclass, fields
 from typing import Any
 import pytest
 
-from src.functions.chain import chain, AnswerDirectly
-from src.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
-from src.tools.python import Python
-from src.tools.search import Search, search
+from citoplasm.functions.chain import chain, AnswerDirectly
+from citoplasm.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
+from citoplasm.tools.python import Python
+from citoplasm.tools.search import Search, search
 
 
 @pytest.mark.asyncio

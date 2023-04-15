@@ -1,5 +1,5 @@
 import pytest
-from src.functions.verify import verify
+from citoplasm.functions.verify import verify
 
 
 @pytest.mark.asyncio

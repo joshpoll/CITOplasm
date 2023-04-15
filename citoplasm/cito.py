@@ -5,9 +5,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type, cast
 
 from fvalues import F
 
-from src.agent.agent import Agent
-from src.agent.openai_chat_agent import OpenAIChatAgent
-from src.util import print_with_color
+from citoplasm.agent.agent import Agent
+from citoplasm.agent.openai_chat_agent import OpenAIChatAgent
+from citoplasm.util import print_with_color
 
 
 @dataclass(frozen=True)

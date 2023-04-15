@@ -25,6 +25,10 @@ Run tests (call from top-level)
 pytest
 ```
 
+## How to publish
+
+https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
 ## Motivation and Inspiration
 
 This library builds on ICE: https://github.com/oughtinc/ice

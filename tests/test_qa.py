@@ -1,6 +1,6 @@
 import pytest
-from src.functions.ask import ask
-from src.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
+from citoplasm.functions.ask import ask
+from citoplasm.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
 
 
 @pytest.mark.asyncio
