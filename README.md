@@ -130,19 +130,16 @@ primitives and normal Python code without the need for writing prompts or recipe
 course, we still want it to be possible for end-users to create their own primitives using prompts
 and recipes if they want, but we should be able to reduce the need for this.
 
-The primitives we
-have so far are:
+The functions we have so far are:
 
 - **ask** Q&A format
-- **chat:** back-and-forth conversations (possibly multiple) with other agents and humans
-- **classify** to assign a category to a given input (match)
-- **approx-equal and approx-cmp** (uses classify)
+- **chain** (while loop)
+- **info_eq and info_cmp** (equality)
+- **decompose** to break apart an input into smaller pieces (destructure)
+- **generate** to list elements of a collection (generator)
 
 Some additional primitives we're thinking about or working on are:
 
-- **decompose** to break apart an input into smaller pieces (destructure)
-  - can this be used to implement CoT?
-- **enumerate** to list elements of a collection (generator)
 - **translate/transform**
 - **summarize/reduce**
 - **filter/extract/parse/regex**
