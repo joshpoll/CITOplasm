@@ -1,7 +1,7 @@
 import ast
 from dataclasses import dataclass, fields
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypedDict, cast
 
 from fvalues import F
 
@@ -110,7 +110,12 @@ def pp_actions(actions: List[Type]) -> str:
 Thought = str
 Output = Any
 
-Example = Tuple[str, Thought, Output]
+
+@dataclass(frozen=True)
+class Example:
+    input: str
+    thought: Thought
+    output: Output
 
 
 # CITO: (context, input) -> (thought, output)
@@ -126,13 +131,13 @@ def createCITO(
         F("\n").join(
             F(
                 f"""## Example {i + 1} ##
-{example[0]}
+{example.input}
 
 # Thought #
-{example[1]}
+{example.thought}
 
 # Action #
-{pp_action_object(example[2])}
+{pp_action_object(example.output)}
 """
             )
             for i, example in enumerate(examples)

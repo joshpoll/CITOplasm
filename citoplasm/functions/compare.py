@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from fvalues import F
 from citoplasm.agent.agent import Agent
-from citoplasm.cito import createCITO
+from citoplasm.cito import Example, createCITO
 
 
 @dataclass(frozen=True)
@@ -27,23 +27,23 @@ async def info_eq(
         """Are these two pieces of information similar?""",
         [SimilarTo, DifferentThan],
         examples=[
-            (
-                '''First piece of information: "3-7"
+            Example(
+                input='''First piece of information: "3-7"
 Second piece of information: "4"''',
-                "The first piece of information is a range of numbers, and the second piece of information is a number within that range.",
-                SimilarTo,
+                thought="The first piece of information is a range of numbers, and the second piece of information is a number within that range.",
+                output=SimilarTo,
             ),
-            (
-                '''First piece of information: "5"
-                  Second piece of information: "4"''',
-                "The first piece of information is a number, and the second piece of information is a different number.",
-                DifferentThan,
+            Example(
+                input='''First piece of information: "5"
+Second piece of information: "4"''',
+                thought="The first piece of information is a number, and the second piece of information is a different number.",
+                output=DifferentThan,
             ),
-            (
-                '''First piece of information: "5.1"
-                  Second piece of information: "4.9"''',
-                "The first piece of information is a number, and the second piece of information is a different number. However, the two numbers are very close to each other.",
-                SimilarTo,
+            Example(
+                input='''First piece of information: "5.1"
+Second piece of information: "4.9"''',
+                thought="The first piece of information is a number, and the second piece of information is a different number. However, the two numbers are very close to each other.",
+                output=SimilarTo,
             ),
         ],
         agent=agent,
