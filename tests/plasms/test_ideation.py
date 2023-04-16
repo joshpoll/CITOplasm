@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import pytest
+from citoplasm.functions import distill
 from citoplasm.functions.ask import ask
 
 from citoplasm.functions.generate import CannotAnswer, ItemList, generate
@@ -42,6 +43,10 @@ async def test_ideation_jupyter_notebook_research():
     print(why_pain_points)
     print()
 
+    # not useful here...
+    # distilled_root_causes = await distill(why_pain_points)
+    # print(distilled_root_causes)
+
     design_principles = await generate(
         "3-5",
         "principles of programming languages design. An example of a principle of programming languages design is simplicity: The language should be simple to learn and use.",
@@ -51,6 +56,16 @@ async def test_ideation_jupyter_notebook_research():
     # for each pain point, explore why that pain point exists. what is the root cause?
     # after you've identified root causes, see if you can anti-unify them into a single root cause (e.g. "data is messy")
     # for each distilled root cause, explore what are the possible solutions to that root cause
+
+    potential_solutions = await async_map(
+        list(zip(pain_points.items, why_pain_points)),
+        address_pain_point,
+    )
+
+    print(potential_solutions)
+
+    distilled_solution = await distill(potential_solutions)
+    print(distilled_solution)
 
 
 async def address_pain_point(
