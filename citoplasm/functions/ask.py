@@ -1,19 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional
+from citoplasm.actions import AnswerDirectly, CannotAnswer
 
 from citoplasm.agent.agent import Agent
 from citoplasm.cito import createCITO
-
-
-@dataclass(frozen=True)
-class AnswerDirectly:
-    answer: str
-    desc: Optional[str] = "Choose this option to provide your answer directly."
-
-
-@dataclass(frozen=True)
-class CannotAnswer:
-    desc: Optional[str] = "Choose this option if you cannot answer the question."
 
 
 async def ask(

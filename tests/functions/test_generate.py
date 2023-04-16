@@ -1,7 +1,7 @@
 import pytest
 from citoplasm.functions.generate import CannotAnswer, ItemList, generate
 from citoplasm.functions.ask import ask
-from citoplasm.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
+from citoplasm.functions.compare import MoreInformative, SimilarTo, info_cmp, info_eq
 
 
 @pytest.mark.asyncio
@@ -26,7 +26,7 @@ async def test_generate_with_context():
 
 @pytest.mark.asyncio
 async def test_generate_cannot_answer():
-    answer = await generate(10, "members of the Beatles")
+    answer = await generate(10, "core members of the Beatles")
     print(answer)
     assert isinstance(answer, CannotAnswer)
     # TODO: check that the reason is correct!

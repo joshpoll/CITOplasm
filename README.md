@@ -165,3 +165,5 @@ Decompose seems to overlap with the reasoning part of Q&A (thinking step by step
 maybe that also means tradeoffs in accuracy).
 
 tool selection, multiple choice QA, sub-agent calls can all be built on classify
+
+Consistency within prompts is absolutely crucial. Using the same markings consistently to denote sections or else performance will degrade exponentially.

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, List, Optional, Type
+from citoplasm.actions import AnswerDirectly, CannotAnswer
 from citoplasm.cito import ErrorAction, createCITO, pp_action_object
 
 
@@ -13,32 +14,16 @@ If the previous action resulted in an error, please provide an action that will 
 When you are done, choose the AnswerDirectly action."""
 
 
-@dataclass(frozen=True)
-class AnswerDirectly:
-    answer: str
-    desc: Optional[str] = "Choose this option to provide your answer directly."
-
-
-@dataclass(frozen=True)
-class CannotAnswerQuestion:
-    answer: str
-    desc: Optional[
-        str
-    ] = "Choose this option if you cannot answer the question with the tools given."
-
-
 def terminate(action):
-    return isinstance(action, AnswerDirectly) or isinstance(
-        action, CannotAnswerQuestion
-    )
+    return isinstance(action, AnswerDirectly) or isinstance(action, CannotAnswer)
 
 
-async def chain(question: Question, tools: List[Type]) -> str:
-    tools = tools + [AnswerDirectly, CannotAnswerQuestion]
+async def chain(question: Question, tools: List[Type], debug: bool = False) -> str:
+    tools = tools + [AnswerDirectly, CannotAnswer]
     _chain = createCITO(CHAIN_INSTRUCTIONS, tools)
     action: Any = None
 
-    fuel = 5
+    steps = 1
 
     # with LocalStateList(
     #     [],
@@ -46,17 +31,20 @@ async def chain(question: Question, tools: List[Type]) -> str:
     # ) as context:
 
     context = (
-        "This is a list of actions and results from previous steps in your execution.\n"
+        "This is a list of actions and results from previous steps in your execution."
     )
 
-    while not terminate(action) and fuel > 0:
+    while not terminate(action) and steps <= 5:
         thought, action = await _chain(question, context=context)
         if isinstance(action, ErrorAction):
             # Add a string to the context string containing the thought and the error
             context += "\n" + thought + "\n" + f"{action.err}"
         elif not terminate(action):
             observation = await action.run()
-            context += f"## STEP\n### Action\n{pp_action_object(action)}\n\n### Result\n{observation.strip()}\n\n### Justification\n{thought if thought else 'None'}\n\n"
-        fuel -= 1
+            context += f"\n\n## Step {steps} ##\n# Thought #\n{thought if thought else 'None'}\n\n# Action #\n{pp_action_object(action)}\n\n# Result #\n{observation.strip()}"
+        steps += 1
+        if debug:
+            print(thought)
+            print(action)
 
     return action.answer

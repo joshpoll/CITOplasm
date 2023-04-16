@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, Union
 from fvalues import F
+from citoplasm.actions import CannotAnswer
 from citoplasm.agent.agent import Agent
 
 from citoplasm.cito import createCITO
@@ -16,15 +17,10 @@ class Wrong:
     desc: Optional[str] = "Choose this option if the answer is wrong."
 
 
-@dataclass(frozen=True)
-class Unknown:
-    desc: Optional[str] = "Choose this option if you don't know the answer."
-
-
 async def verify(question: str, answer: str, agent: Optional[Agent] = None) -> bool:
     verify = createCITO(
         "Consider the potential answer to the question. Is it correct?",
-        [Correct, Wrong, Unknown],
+        [Correct, Wrong, CannotAnswer],
         agent=agent,
     )
 

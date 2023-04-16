@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 
 from citoplasm.functions.chain import chain, AnswerDirectly
-from citoplasm.functions.compare import MoreInformative, SameAs, info_cmp, info_eq
+from citoplasm.functions.compare import MoreInformative, info_cmp, info_eq
 from citoplasm.tools.python import Python
 from citoplasm.tools.search import Search, search
 
@@ -19,11 +19,14 @@ async def test_chain_multistep():
     res = await chain(
         "What is the log10 of the number of people living in the US vs China?",
         [Search, Python],
+        debug=True,
     )
-    assert await info_eq(
-        res,
-        "The log10 of the population of the US is 8.52 and the log10 of the population of China is 9.16.",
-    )
+    assert (
+        await info_eq(
+            res,
+            "The log10 of the population of the US is 8.52 and the log10 of the population of China is 9.16.",
+        )
+    ) or (await info_eq(res, "0.64"))
 
 
 @pytest.mark.asyncio

@@ -110,22 +110,57 @@ def pp_actions(actions: List[Type]) -> str:
 Thought = str
 Output = Any
 
+Example = Tuple[str, Thought, Output]
+
 
 # CITO: (context, input) -> (thought, output)
 # returns a CITO function
+# TODO: make examples input better
 def createCITO(
-    instructions: str, output_actions: List[Type], agent: Optional[Agent] = None
+    instructions: str,
+    output_actions: List[Type],
+    examples: Optional[List[Example]] = None,
+    agent: Optional[Agent] = None,
 ):
+    formatted_examples = (
+        F("\n").join(
+            F(
+                f"""## Example {i + 1} ##
+{example[0]}
+
+# Thought #
+{example[1]}
+
+# Action #
+{pp_action_object(example[2])}
+"""
+            )
+            for i, example in enumerate(examples)
+        )
+        if examples is not None
+        else None
+    )
+
     async def cito(input: str, context: Optional[str] = None) -> Tuple[Thought, Output]:
         prompt = F(
             f"""You are a CITO agent. You'll be given some contextual information, some instructions for this step, and some input data.
 
+### Instructions ###
+
+{instructions}
+
+### Relevant Context ###
+
+{context if context and context is not None else "<none>"}
+
+### Response Format ###
+
 Respond with the following format:
 
-# Thought
+# Thought #
 You should always think about what to do. Work this out in a step by step way to be sure we take the right action. Use the context above to help you make a decision.
 
-# Action
+# Action #
 The next action to perform when considering the input.
 
 Output the name of an action and some arguments. For example: "ExampleAction(arg='example')"
@@ -139,23 +174,18 @@ If the option has no arguments, you can just write the name of the action. For e
 You MUST pick from one of the following actions:
 {pp_actions(output_actions)}
 
+{f'''### Examples ###
+
+Here are some examples of valid responses given an input and the instructions and context above:
+
+{formatted_examples}
+''' if examples is not None else ""}
+
 Begin!
 
----
-
-# Instructions
-
-{instructions}
-
-# Relevant Context
-
-{context if context and context is not None else "<none>"}
-
-# Input
+## Input ##
 
 {input}
-
-
 """
         ).strip()
         # print_with_color(f"PROMPT {prompt}", "blue")
@@ -163,13 +193,13 @@ Begin!
         res = await OpenAIChatAgent().complete(prompt=prompt)
         # split thought and action using a regex
         # split_res = re.split(r"Action:\s*", res)
-        split_res = re.split(r"# Action\s*", res)
+        split_res = re.split(r"# Action #\s*", res)
         # thought may not exist
         thought = split_res[0].strip() if len(split_res) > 1 else ""
         action = split_res[-1].strip()
 
         # remove "# Thought" from thought
-        thought = thought.replace("# Thought", "").strip()
+        thought = thought.replace("# Thought #", "").strip()
         try:
             # print(f"Prompt: {prompt}")
             # print(f"Thought: {thought}")

@@ -40,10 +40,15 @@ def exec_python(code: str) -> str:
     captured_output = output_capture.getvalue()
 
     global _i
-    return F(
+    res = F(
         f"""{captured_output}
 {_i if "_i" in globals() and _i is not None else ""}"""
     ).strip()
+
+    if not res:
+        res = "No output. Did you remember to use print()?"
+
+    return res
 
 
 async def async_eval_python(expression: str) -> str:

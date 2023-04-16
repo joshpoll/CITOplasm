@@ -7,10 +7,10 @@ from citoplasm.cito import createCITO
 
 
 @dataclass(frozen=True)
-class SameAs:
+class SimilarTo:
     desc: Optional[
         str
-    ] = "Choose this option if the two pieces of information are the same."
+    ] = "Choose this option if the two pieces of information are similar."
 
 
 @dataclass(frozen=True)
@@ -24,31 +24,28 @@ async def info_eq(
     text1: str, text2: str, agent: Optional[Agent] = None, debug: bool = False
 ) -> bool:
     info_eq = createCITO(
-        """Are these two pieces of information about the same?
-
-# Examples
-
-Example:
-First piece of information: "3-7"
-Second piece of information: "4"
-SameAs
-
-Example:
-First piece of information: "5"
-Second piece of information: "4"
-SameAs
-
-Example:
-First piece of information: "5.1"
-Second piece of information: "4.9"
-SameAs
-
-Example:
-First piece of information: "10"
-Second piece of information: "100"
-DifferentThan
-""",
-        [SameAs, DifferentThan],
+        """Are these two pieces of information similar?""",
+        [SimilarTo, DifferentThan],
+        examples=[
+            (
+                '''First piece of information: "3-7"
+Second piece of information: "4"''',
+                "The first piece of information is a range of numbers, and the second piece of information is a number within that range.",
+                SimilarTo,
+            ),
+            (
+                '''First piece of information: "5"
+                  Second piece of information: "4"''',
+                "The first piece of information is a number, and the second piece of information is a different number.",
+                DifferentThan,
+            ),
+            (
+                '''First piece of information: "5.1"
+                  Second piece of information: "4.9"''',
+                "The first piece of information is a number, and the second piece of information is a different number. However, the two numbers are very close to each other.",
+                SimilarTo,
+            ),
+        ],
         agent=agent,
     )
 
@@ -63,7 +60,7 @@ Second piece of information: "{text2}"
     if debug:
         print(thought)
         print(answer)
-    return answer == SameAs()
+    return answer == SimilarTo()
 
 
 @dataclass(frozen=True)
@@ -89,7 +86,7 @@ class Incomparable:
 
 async def info_cmp(
     text1: str, text2: str, agent: Optional[Agent] = None, debug: bool = False
-) -> Union[LessInformative, SameAs, MoreInformative, Incomparable]:
+) -> Union[LessInformative, SimilarTo, MoreInformative, Incomparable]:
     info_cmp = createCITO(
         """Which of the input pieces of information is more informative?
 
@@ -108,14 +105,14 @@ LessThan
 Example:
 First piece of information: "8 * 8 = 64"
 Second piece of information: "The answer is 8 * 8 = 64"
-SameAs
+SimilarTo
 
 Example:
 First piece of information: "The sky is blue."
 Second piece of information: "The sky is red."
 Incomparable
 """,
-        [LessInformative, SameAs, MoreInformative, Incomparable],
+        [LessInformative, SimilarTo, MoreInformative, Incomparable],
         agent=agent,
     )
 
