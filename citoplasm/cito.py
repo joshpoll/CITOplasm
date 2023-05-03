@@ -170,6 +170,11 @@ The next action to perform when considering the input.
 
 Output the name of an action and some arguments. For example: "ExampleAction(arg='example')"
 
+If you need to output a multi-line string, use the following format:
+ExampleAction(arg='''example
+example
+example''')
+
 Do not output any text other than the action and its arguments.
 For example, DO NOT WRITE: "Highlight and copy the population number from the article"
 Another example, DO NOT WRITE: "Result: ExampleAction(arg='example')"
@@ -193,7 +198,7 @@ Begin!
 {input}
 """
         ).strip()
-        # print_with_color(f"PROMPT {prompt}", "blue")
+        print_with_color(f"PROMPT {prompt}", "blue")
 
         res = await OpenAIChatAgent().complete(prompt=prompt)
         # split thought and action using a regex
