@@ -3,6 +3,27 @@ import re
 import mwparserfromhell
 from dataclasses import dataclass
 
+from cito_tests.example_apps.lib.process_districts import parse_region_list
+
+# TODO: extract region parsing into a separate function from section parsing
+# TODO: make a separate parser for each of the possible top-level sections including these from Cap Hill page: ['Understand', 'Get in', 'See', 'Do', 'Buy', 'Eat', 'Drink', 'Sleep', 'Stay safe', 'Connect']
+#       (there's a template page somewhere that lists expected sections)
+# TODO: for now we'll focus on Eat, Drink, Do, See, and Buy
+
+# from AutoGPT:
+"""
+I want Auto-GPT to: Create a "36 hours in Seattle" article in the style of the New York Times.
+SeattleGuideGPT  has been created with the following details:
+Name:  SeattleGuideGPT
+Role:  an AI travel writer that specializes in creating engaging and informative travel guides for various destinations around the world. SeattleGuideGPT is designed to help travelers make the most of their time in Seattle by providing personalized recommendations and insider tips.
+Goals:
+-  Create a comprehensive and engaging "36 hours in Seattle" article that captures the essence of the city and highlights its top attractions, restaurants, and activities.
+-  Provide personalized recommendations based on the traveler's interests, preferences, and budget to ensure a unique and memorable experience.
+-  Incorporate insider tips and local knowledge to give readers a deeper understanding of Seattle's culture, history, and lifestyle.
+-  Use a writing style that is consistent with the New York Times' brand and tone, while also adding a personal touch to make the article more relatable and engaging.
+-  Optimize the article for search engines and social media to increase its visibility and reach among potential readers.
+"""
+
 
 # Input: location (e.g. "Berlin")
 # Output: list of sections of the corresponding Wikivoyage page
@@ -75,40 +96,6 @@ def stringify_nested_sections(nested_sections) -> str:
         return result
 
     return stringify(nested_sections, 1)
-
-
-@dataclass
-class Region:
-    name: str
-    description: str
-    wikilink: str
-
-
-def parse_region_list(region_list):
-    params = region_list.params
-
-    region_names_regex = re.compile(r"region\dname")
-    region_descriptions_regex = re.compile(r"region\ddescription")
-
-    region_names_and_urls = [
-        (
-            param.value.strip_code().strip(),
-            param.value.filter_wikilinks()[0].title.strip_code(),
-        )
-        for param in params
-        if region_names_regex.match(param.name.strip_code())
-    ]
-    print(region_names_and_urls)
-    region_descriptions = [
-        param.value.strip()
-        for param in params
-        if region_descriptions_regex.match(param.name.strip_code())
-    ]
-
-    return [
-        Region(name, description, url)
-        for (name, url), description in zip(region_names_and_urls, region_descriptions)
-    ]
 
 
 # takes in a mwparserfromhell section and returns a dict of title, level, and contents

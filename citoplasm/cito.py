@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypedDict, 
 
 from fvalues import F
 
-from citoplasm.agent.agent import Agent
+from citoplasm.agent.agent import Agent, agent_template
 from citoplasm.agent.openai_chat_agent import OpenAIChatAgent
 from citoplasm.util import print_with_color
 
